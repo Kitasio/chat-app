@@ -20,6 +20,7 @@ const fetchDocuments = async () => {
 
 const IndexPage = async () => {
   const docs = await fetchDocuments();
+  console.log(apiUrl)
   return (
     <div className="bg-zinc-900">
       <div>IndexPage</div>
