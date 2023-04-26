@@ -3,24 +3,23 @@ type Document = {
   text: string;
 };
 
-const apiUrl = process.env.API_ENDPOINT || "http://localhost:5521";
-
 const fetchDocuments = async () => {
-  const response = await fetch(`${apiUrl}/getDocuments`, {
-    mode: "cors",
-  });
+  try {
+    const response = await fetch(`${process.env.apiEndpoint}/getDocuments`, {
+      mode: "cors",
+      cache: "no-store"
+    });
 
-  if (!response.ok) {
+    const documentList = (await response.json()) as Document[];
+    return documentList;
+  } catch (error) {
+    console.log(error)
     return [];
   }
-
-  const documentList = (await response.json()) as Document[];
-  return documentList;
 };
 
 const IndexPage = async () => {
   const docs = await fetchDocuments();
-  console.log(apiUrl)
   return (
     <div className="bg-zinc-900">
       <div>IndexPage</div>
