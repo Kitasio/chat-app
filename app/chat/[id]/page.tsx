@@ -1,4 +1,3 @@
-import { Context } from "vm";
 import ChatBox from "./ChatBox";
 
 const load_data = async (chatId: string) => {
@@ -16,13 +15,13 @@ const load_data = async (chatId: string) => {
   }
 }
 
-async function ChatPageId({ params: { id } }: Context) {
-  const chat = await load_data(id);
+async function ChatPageId({ params }: any) {
+  const chat = await load_data(params.id);
 
   return (
     <div className="h-screen py-10 flex flex-col max-w-screen-md mx-auto">
       <h1 className="text-4xl font-medium text-center">Health Chat</h1>
-      <ChatBox chat_id={id} messages={chat} />
+      <ChatBox chat_id={params.id} messages={chat} />
     </div>
   );
 }
