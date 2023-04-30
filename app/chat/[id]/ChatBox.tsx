@@ -12,10 +12,15 @@ interface Props {
   messages: Message[];
 }
 
+const randomIntFromInterval = (min: number, max: number) => {
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
 function ChatBox({ chat_id, messages }: Props) {
   const [message, setMessage] = useState("")
   const [loading, setLoading] = useState(false)
   const [userTempMessage, setUserTempMessage] = useState("")
+  const [assistantTyping, setAssistantTyping] = useState(false)
 
   const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -25,12 +30,16 @@ function ChatBox({ chat_id, messages }: Props) {
     setLoading(true)
     setMessage("")
     setUserTempMessage(message)
+    setTimeout(() => {
+      setAssistantTyping(true)
+    }, randomIntFromInterval(600, 1000))
     const query = `${process.env.apiEndpoint}/query/${chat_id}?text=${message}`
     await fetch(query, {
       mode: "cors",
       cache: "no-store"
     });
     setUserTempMessage("")
+    setAssistantTyping(false)
     setLoading(false)
     router.refresh()
   }
@@ -64,6 +73,11 @@ function ChatBox({ chat_id, messages }: Props) {
               {userTempMessage &&
                 <div className="max-w-md w-fit p-4 text-emerald-50 bg-emerald-900 rounded-xl self-end">
                   {userTempMessage}
+                </div>
+              }
+              {assistantTyping &&
+                <div className="max-w-md w-fit p-4 text-zinc-200-50 bg-zinc-900 rounded-xl">
+                  <p className="animate-pulse">typing...</p>
                 </div>
               }
             </div>
