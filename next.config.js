@@ -4,7 +4,7 @@ const nextConfig = {
     appDir: true,
   },
   env: {
-    apiEndpoint: process.env.API_ENDPOINT || "http://localhost:5521",
+    apiEndpoint: process.env.API_ENDPOINT || "http://localhost:8000",
   },
 }
 

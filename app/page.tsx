@@ -1,11 +1,11 @@
 type Document = {
+  filename: string;
   id: string;
-  text: string;
 };
 
 const fetchDocuments = async () => {
   try {
-    const response = await fetch(`${process.env.apiEndpoint}/getDocuments`, {
+    const response = await fetch(`${process.env.apiEndpoint}/list_indices`, {
       mode: "cors",
       cache: "no-store"
     });
@@ -25,7 +25,7 @@ const IndexPage = async () => {
       <div>IndexPage</div>
       <div className="m-3 flex flex-col gap-5">
         {docs.map((doc) => {
-          return <div key={doc.id}>{doc.text}</div>;
+          return <div key={doc.id}>{doc.filename}</div>;
         })}
       </div>
     </div>
