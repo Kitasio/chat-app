@@ -59,13 +59,12 @@ function ChatBox({ chat_id, messages }: Props) {
   return (
     <>
       <div className="p-7 m-5 overflow-y-scroll flex flex-col justify-between flex-grow rounded-lg border-2 border-green-500">
-        <h2 className="text-3xl">AI assistant</h2>
         <div className="space-y-2">
           <div className="flex-grow flex flex-col justify-between">
             <div id="chat-box" ref={scrollRef} className="flex flex-col gap-4">
               {messages.map((msg: Message) => {
                 return (
-                  <div key={msg.content} className="max-w-md w-fit p-4 text-zinc-200 bg-zinc-900 odd:text-emerald-50 odd:bg-emerald-900 rounded-xl odd:self-end">
+                  <div key={msg.content} className="max-w-md w-fit p-4 text-zinc-200 bg-zinc-800 odd:text-emerald-50 odd:bg-emerald-900 rounded-xl odd:self-end">
                     <p>{msg.content}</p>
                   </div>
                 )
@@ -76,7 +75,7 @@ function ChatBox({ chat_id, messages }: Props) {
                 </div>
               }
               {assistantTyping &&
-                <div className="max-w-md w-fit p-4 text-zinc-200-50 bg-zinc-900 rounded-xl">
+                <div className="max-w-md w-fit p-4 text-zinc-200-50 bg-zinc-800 rounded-xl">
                   <p className="animate-pulse">typing...</p>
                 </div>
               }
@@ -85,14 +84,25 @@ function ChatBox({ chat_id, messages }: Props) {
         </div>
       </div>
       <div className="px-5 mt-5 flex gap-3">
-        <input onKeyDown={(e) => handleKeyDown(e, message)} value={message} onChange={(e) => setMessage(e.target.value)} className="bg-zinc-900 p-2 rounded w-full" placeholder="Your message" />
+        <input
+          className="mt-1 p-3
+                    block
+                    w-full
+                    rounded-md
+                    bg-zinc-800
+                    border-transparent
+                    focus:border-zinc-800 focus:ring-0"
+          onKeyDown={(e) => handleKeyDown(e, message)} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Your message" />
         {loading ?
-          <button disabled className="animate-pulse p-2 rounded border-2 border-emerald-400 text-emerald-400">Sending...</button> :
+          <button disabled className="animate-pulse p-2 rounded border-2 border-emerald-400 text-emerald-400">...</button> :
           <button
-            className="py-3 px-5 rounded border-2 border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-zinc-800 transition"
+            className="rounded text-emerald-400 hover:text-emerald-600 hover:scale-110 transition"
             onClick={() => {
               query(message);
-            }}>Send
+            }}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+            </svg>
           </button>
         }
       </div>

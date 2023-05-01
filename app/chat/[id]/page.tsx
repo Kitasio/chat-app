@@ -20,7 +20,7 @@ async function ChatPageId({ params }: any) {
 
   return (
     <div className="h-screen py-10 flex flex-col max-w-screen-md mx-auto">
-      <h1 className="text-4xl font-medium text-center">Health Chat</h1>
+      <h1 className="text-4xl font-medium text-center">Sport Chat</h1>
       <ChatBox chat_id={params.id} messages={chat} />
     </div>
   );
