@@ -1,6 +1,5 @@
 "use client"
 
-import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect, KeyboardEvent } from "react";
 
 interface Message {
@@ -19,36 +18,36 @@ const randomIntFromInterval = (min: number, max: number) => {
 function ChatBox({ chat_id, messages }: Props) {
   const [message, setMessage] = useState("")
   const [loading, setLoading] = useState(false)
-  const [userTempMessage, setUserTempMessage] = useState("")
   const [assistantTyping, setAssistantTyping] = useState(false)
+  const [chatHistory, setChatHistory] = useState<Message[]>(messages)
 
   const scrollRef = useRef<HTMLDivElement>(null)
-
-  const router = useRouter()
-
-  const query = async (message: string) => {
-    setLoading(true)
-    setMessage("")
-    setUserTempMessage(message)
-    setTimeout(() => {
-      setAssistantTyping(true)
-    }, randomIntFromInterval(600, 1000))
-    const query = `${process.env.apiEndpoint}/query/${chat_id}?text=${message}`
-    await fetch(query, {
-      mode: "cors",
-      cache: "no-store"
-    });
-    setUserTempMessage("")
-    setAssistantTyping(false)
-    setLoading(false)
-    router.refresh()
-  }
 
   useEffect(() => {
     if (scrollRef.current !== null) {
       scrollRef.current.scrollIntoView({ behavior: "smooth", block: "end" })
     }
-  }, [messages])
+  }, [messages, chatHistory])
+
+  const query = async (message: string) => {
+    setLoading(true)
+    setMessage("")
+    let newChatHistory = [...chatHistory, { content: message }]
+    setChatHistory(newChatHistory)
+    setTimeout(() => {
+      setAssistantTyping(true)
+    }, randomIntFromInterval(600, 1000))
+    const query = `${process.env.apiEndpoint}/query/${chat_id}?text=${message}`
+    const res = await fetch(query, {
+      mode: "cors",
+      cache: "no-store"
+    });
+    const json = await res.json()
+    newChatHistory = [...newChatHistory, { content: json.content }]
+    setChatHistory(newChatHistory)
+    setAssistantTyping(false)
+    setLoading(false)
+  }
 
   const handleKeyDown = (event: KeyboardEvent, message: string) => {
     if (event.key === 'Enter') {
@@ -62,18 +61,13 @@ function ChatBox({ chat_id, messages }: Props) {
         <div className="space-y-2">
           <div className="flex-grow flex flex-col justify-between">
             <div id="chat-box" ref={scrollRef} className="flex flex-col gap-4">
-              {messages.map((msg: Message) => {
+              {chatHistory.map((msg: Message) => {
                 return (
                   <div key={msg.content} className="max-w-md w-fit p-4 text-zinc-200 bg-zinc-800 odd:text-emerald-50 odd:bg-emerald-900 rounded-xl odd:self-end">
                     <p>{msg.content}</p>
                   </div>
                 )
               })}
-              {userTempMessage &&
-                <div className="max-w-md w-fit p-4 text-emerald-50 bg-emerald-900 rounded-xl self-end">
-                  {userTempMessage}
-                </div>
-              }
               {assistantTyping &&
                 <div className="max-w-md w-fit p-4 text-zinc-200-50 bg-zinc-800 rounded-xl">
                   <p className="animate-pulse">typing...</p>
@@ -100,9 +94,7 @@ function ChatBox({ chat_id, messages }: Props) {
             onClick={() => {
               query(message);
             }}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-            </svg>
+            Send
           </button>
         }
       </div>
