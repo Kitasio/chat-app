@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect, KeyboardEvent } from "react";
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 
 interface Message {
   content: string;
@@ -55,24 +56,28 @@ function ChatBox({ chat_id, messages }: Props) {
     }
   }
 
+  const [chatRef] = useAutoAnimate();
+
   return (
     <>
       <div className="p-7 m-5 overflow-y-scroll flex flex-col justify-between flex-grow rounded-lg border-2 border-green-500">
         <div className="space-y-2">
           <div className="flex-grow flex flex-col justify-between">
-            <div id="chat-box" ref={scrollRef} className="flex flex-col gap-4">
-              {chatHistory.map((msg: Message) => {
-                return (
-                  <div key={msg.content} className="max-w-md w-fit p-4 text-zinc-200 bg-zinc-800 odd:text-emerald-50 odd:bg-emerald-900 rounded-xl odd:self-end">
-                    <p>{msg.content}</p>
+            <div id="chat-box" ref={scrollRef}>
+              <div ref={chatRef} className="flex flex-col gap-4">
+                {chatHistory.map((msg: Message, index) => {
+                  return (
+                    <div key={`msg-${index}`} className="max-w-md w-fit p-4 text-zinc-200 bg-zinc-800 odd:text-emerald-50 odd:bg-emerald-900 rounded-xl odd:self-end">
+                      <p>{msg.content}</p>
+                    </div>
+                  )
+                })}
+                {assistantTyping &&
+                  <div className="max-w-md w-fit p-4 text-zinc-200-50 bg-zinc-800 rounded-xl">
+                    <p className="animate-pulse">typing...</p>
                   </div>
-                )
-              })}
-              {assistantTyping &&
-                <div className="max-w-md w-fit p-4 text-zinc-200-50 bg-zinc-800 rounded-xl">
-                  <p className="animate-pulse">typing...</p>
-                </div>
-              }
+                }
+              </div>
             </div>
           </div>
         </div>
